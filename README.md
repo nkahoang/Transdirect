@@ -2,6 +2,8 @@
 
 This library is MIT License
 
+[![Build status](https://ci.appveyor.com/api/projects/status/j22642256e9q5fef?svg=true&passingText=master%20-%20OK)](https://ci.appveyor.com/project/nkahoang/transdirect)
+
 ## 1. Introduction
 
 The Transdirect Library is a .NET Standard wrapper for Transdirect API v4 (https://www.transdirect.com.au/education/developers-centre/rest-api/, document at http://docs.transdirectapiv4.apiary.io/). The library is compatible with .NET Standard 1.4+ (.NET Core 1.0+, .NETFramework 4.5+).
@@ -18,8 +20,12 @@ Additional endpoints are in development.
 
 ## 2. Adding reference
 
-NuGet package shall be available in the future. At the moment:
+NuGet.org package shall be available in the future. At the moment, please either add MyGet package source (built straight from `master`) or add direct reference to the repo.
 
+### 2A. Add MyGet package
+Following instructions: https://www.myget.org/feed/nkahoang/package/nuget/Transdirect-NetStandard
+
+### 2B. Add direct reference
 1. Clone this repo:
 
 ```bash
