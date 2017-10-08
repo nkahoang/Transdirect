@@ -18,7 +18,7 @@
     <ProjectReference Include="..\Transdirect\Transdirect.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="config.json">
+    <Content Include="config*.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
