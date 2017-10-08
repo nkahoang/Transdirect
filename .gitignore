@@ -383,3 +383,4 @@ __pycache__/
 
 # Project specific
 Transdirect.Test/config.json
+.artifacts

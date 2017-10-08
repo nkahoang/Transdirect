@@ -57,7 +57,7 @@ var transdirectService = new TransdirectService(options);
 
 ### 4B. Use DI container and Application startup (Recommended)
 
-Put the following in your `appsettings.json` (or your application's config file:)
+Put the following in your `appsettings.json` (or your application's config file):
 
 ```json
 {
@@ -70,8 +70,6 @@ Put the following in your `appsettings.json` (or your application's config file:
 ```
 
 Then in your application initialization:
-
-```csharp
 
 ```csharp
 
