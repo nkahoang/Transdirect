@@ -1,25 +1,17 @@
 version: '0.1.{build}'
-configuration:
-- Release
 environment:
-  # Don't report back to the mothership
   DOTNET_CLI_TELEMETRY_OPTOUT: 1
 pull_requests:  
   do_not_increment_build_number: true
-branches:  
-  only:
-  - master
 nuget:  
   disable_publish_on_pr: true
-init:
-- ps: $Env:LABEL = $Env:APPVEYOR_BUILD_NUMBER.PadLeft(5, "0")
 before_build:
 - appveyor-retry dotnet restore -v Minimal
 build_script:
 - dotnet build "Transdirect" -c %CONFIGURATION% --no-dependencies --version-suffix %LABEL%
 after_build:
 - dotnet pack "Transdirect" -c %CONFIGURATION% --no-build --version-suffix %LABEL% -o artifacts
-test: off  
+test: off
 artifacts:  
 - path: Transdirect\artifacts\**\*.nupkg
   name: NuGet
@@ -38,3 +30,20 @@ deploy:
   on:
     branch: production
     appveyor_repo_tag: true
+for:
+-
+  branches:
+    only:
+    - master
+  configuration:
+    - Debug
+  init:
+    - ps: $Env:LABEL = "CI" + $Env:APPVEYOR_BUILD_NUMBER.PadLeft(5, "0")
+-
+  branches:
+    only:
+    - production
+  configuration:
+    - Release
+  init:
+    - ps: $Env:LABEL = """
