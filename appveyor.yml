@@ -1,6 +1,5 @@
 version: '0.1.{build}'
 configuration:
-- Debug
 - Release
 environment:
   # Don't report back to the mothership
