@@ -1,0 +1,29 @@
+version: '{build}'  
+pull_requests:  
+  do_not_increment_build_number: true
+branches:  
+  only:
+  - master
+nuget:  
+  disable_publish_on_pr: true
+build_script:  
+- ps: .\Build.ps1
+test: off  
+artifacts:  
+- path: .\artifacts\**\*.nupkg
+  name: NuGet
+deploy:  
+- provider: NuGet
+  server: https://www.myget.org/F/nkahoang/api/v2/package
+  api_key:
+    secure: j3bSxNrCwqDekpgZEagnFCoWDKLX9X0T2emPEeSPwEdUGzgfSI1kFmwXXRnWmC9r
+  skip_symbols: true
+  on:
+    branch: master
+- provider: NuGet
+  name: production
+  api_key:
+    secure: jIeZyZUNqaGQlNi/m9c6Ypjr/Hkc0xCpo1jzR1H46BRmxfEi+weW8cJOcBiIaOfZ
+  on:
+    branch: production
+    appveyor_repo_tag: true
