@@ -9,23 +9,34 @@ using Transdirect.Models;
 using Newtonsoft.Json;
 using System.Linq;
 using Transdirect.Resolver;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace Transdirect
 {
-    public class TransdirectService: ITransdirectService
+    public class TransdirectService : ITransdirectService
     {
         TransdirectOptions _options;
         ITransdirectApiService _apiService;
-        public TransdirectService(TransdirectOptions options)
+        IMemoryCache _cache;
+
+        protected const string COURIER_CACHE_KEY = "TRANSDIRECT_COURIERS";
+
+        public TransdirectService(TransdirectOptions options, IMemoryCache memoryCache = null)
         {
             _options = options;
+            _cache = (memoryCache != null) ? memoryCache : new MemoryCache(new MemoryCacheOptions()
+            {
+            });
 
-            var _client = new HttpClient() {
+            var _client = new HttpClient()
+            {
                 BaseAddress = new Uri(_options.BaseUrl),
             };
             _client.DefaultRequestHeaders.Add("Api-key", _options.ApiKey);
-            _apiService = RestService.For<ITransdirectApiService>(_client, new RefitSettings() {
-                JsonSerializerSettings = new JsonSerializerSettings {
+            _apiService = RestService.For<ITransdirectApiService>(_client, new RefitSettings()
+            {
+                JsonSerializerSettings = new JsonSerializerSettings
+                {
                     ContractResolver = new SnakeCasePropertyNamesContractResolver()
                 },
             });
@@ -62,27 +73,53 @@ namespace Transdirect
         public Task<Member> GetMember()
             => _apiService.GetMember();
 
-        public async Task<IEnumerable<Courier>> GetCouriers() {
+        /// <summary>
+        /// Getting all supported couriers.
+        /// This method does cache the list of couriers and can the behaviour can be overwrote by setting forceReload to true
+        /// </summary>
+        /// <param name="forceReload">Whether to always force querying Couriers from Transdirect</param>
+        /// <returns>All supported couriers in an IEnumerable</returns>
+        public async Task<IEnumerable<Courier>> GetCouriers(bool forceReload = false)
+        {
+            IEnumerable<Courier> couriers;
+
+            if (_cache.TryGetValue(COURIER_CACHE_KEY, out couriers) &&
+                (couriers?.Any() ?? false))
+            {
+                return couriers;
+            }
+
             var rawCouriers = await _apiService.GetCouriers();
 
-            return rawCouriers.SelectMany(kvp => {
-                try {
+            couriers = rawCouriers.SelectMany(kvp =>
+            {
+                try
+                {
                     var courierOptions = JsonConvert.DeserializeObject<IDictionary<string, string>>(kvp.Value.ToString());
-                    return courierOptions.Select(coptions => new Courier() {
+                    return courierOptions.Select(coptions => new Courier()
+                    {
                         Name = $"{kvp.Key} - {coptions.Key}",
                         Group = kvp.Key,
                         Value = coptions.Value,
                     });
                 }
-                catch (Exception) {
+                catch (Exception)
+                {
                     // courier only have one option
-                    return new [] { new Courier() { 
-                        Name = kvp.Key, 
-                        Group = kvp.Key, 
+                    return new[] { new Courier() {
+                        Name = kvp.Key,
+                        Group = kvp.Key,
                         Value = kvp.Value.ToString(),
                     } };
                 }
-            });
+            }).ToList();
+
+            return _cache.Set(
+                COURIER_CACHE_KEY,
+                couriers,
+                new MemoryCacheEntryOptions()
+                    .SetAbsoluteExpiration(_options.CouriersCacheDuration)
+            );
         }
     }
 }

@@ -20,7 +20,7 @@ namespace Transdirect.Test
 
             _transdirectService = new TransdirectService(options);
 
-            Log($"Transdirect initialised with API Key {options.ApiKey} and BaseURL {options.BaseUrl}");
+            Log($"Transdirect initialised with API Key {options.ApiKey} with BaseURL {options.BaseUrl} and cache duration {options.CouriersCacheDuration}");
         }
 
         private void Log(string message) {

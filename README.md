@@ -55,6 +55,7 @@ There are two methods to use the library:
 ```csharp
 var options = new TransdirectOptions() {
     ApiKey = "api-key-goes-here";
+    // Other configs
 };
 
 var transdirectService = new TransdirectService(options);
@@ -71,7 +72,9 @@ Put the following in your `appsettings.json` (or your application's config file)
   // [...] your other settings
   // Put TransDirect section in
   "Transdirect": {
-    "ApiKey": "your-api-key"
+    "ApiKey": "your-api-key",
+    "BaseUrl": "https://www.transdirect.com.au/api",
+    "CouriersCacheDuration": "00:05:00"
   }
 }
 ```

@@ -1,5 +1,7 @@
 ﻿{
   "Transdirect": {
-    "ApiKey": "your-api-key"
+    "ApiKey": "your-api-key",
+    "BaseUrl": "https://www.transdirect.com.au/api",
+    "CouriersCacheDuration": "00:05:00"
   }
 }

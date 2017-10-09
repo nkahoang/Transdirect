@@ -10,7 +10,7 @@ namespace Transdirect.Extensions
     public static class ServiceCollectionExtensions
     {
         public static void AddTransdirect(
-            this IServiceCollection services, 
+            this IServiceCollection services,
             TransdirectOptions configureOptions
         )
         {
@@ -21,7 +21,7 @@ namespace Transdirect.Extensions
         }
 
         public static void AddTransdirect(
-            this IServiceCollection services, 
+            this IServiceCollection services,
             Action<TransdirectOptions> configuration)
         {
             configuration.CheckArgumentNull(nameof(configuration));
@@ -34,7 +34,7 @@ namespace Transdirect.Extensions
         }
 
         public static void AddTransdirect(
-            this IServiceCollection services, 
+            this IServiceCollection services,
             IConfigurationRoot configuration
         )
         {
@@ -43,8 +43,8 @@ namespace Transdirect.Extensions
             services.Configure<TransdirectOptions>(
                 configuration.GetSection("Transdirect")
             );
-            
-            services.TryAddTransient<ITransdirectService, TransdirectService>();
+
+            services.TryAddSingleton<ITransdirectService, TransdirectService>();
         }
     }
 }

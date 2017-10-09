@@ -6,7 +6,7 @@ namespace Transdirect
 {
     public interface ITransdirectService
     {
-        Task<IEnumerable<Courier>> GetCouriers();
+        Task<IEnumerable<Courier>> GetCouriers(bool forceReload = false);
         Task<Quote> GetQuote(Quote quote);
         Task<Booking> CreateBooking(Booking booking);
         Task<IEnumerable<Booking>> GetBookings(DateTime? since = null, string sort = null);
@@ -19,7 +19,7 @@ namespace Transdirect
         Task<IEnumerable<Item>> AddItemToBooking(int bookingId, Item item);
         Task<Item> GetBookingSingleItem(int bookingId, int itemId);
         Task<Item> UpdateBookingItem(int bookingId, int itemId, Item item);
-        Task RemoveBookingItem(int bookingId, int itemId);        
+        Task RemoveBookingItem(int bookingId, int itemId);
         Task<Member> GetMember();
     }
 }
