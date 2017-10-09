@@ -1,6 +1,6 @@
 # Transdirect Library for .NET Standard
 
-This library is MIT License
+This library is MIT Licensed
 
 [![Build status](https://ci.appveyor.com/api/projects/status/j22642256e9q5fef?svg=true&passingText=master%20-%20OK)](https://ci.appveyor.com/project/nkahoang/transdirect)
 [![MyGet](https://img.shields.io/myget/nkahoang/dt/Transdirect-NetStandard.svg?label=MyGet%20downloads)](https://www.myget.org/feed/nkahoang/package/nuget/Transdirect-NetStandard)
