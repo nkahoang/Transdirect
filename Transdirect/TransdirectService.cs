@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 using System.Linq;
 using Transdirect.Resolver;
 using Microsoft.Extensions.Caching.Memory;
+using Transdirect.Exceptions;
 
 namespace Transdirect
 {
@@ -40,38 +41,87 @@ namespace Transdirect
                     ContractResolver = new SnakeCasePropertyNamesContractResolver()
                 },
             });
+
+            var refitSettings = new RefitSettings()
+            {
+                JsonSerializerSettings = new JsonSerializerSettings
+                {
+                    ContractResolver = new SnakeCasePropertyNamesContractResolver()
+                },
+            };
         }
 
         public TransdirectService(IOptions<TransdirectOptions> options) : this(options.Value) { }
 
+        protected virtual async Task HandleError<V>(Func<Task> func)
+        {
+            try { await func(); }
+            catch (ApiException ex) { throw TransdirectException.FromApiException(ex); }
+        }
+        protected virtual async Task<V> HandleError<V>(Func<Task<V>> func)
+        {
+            try { return await func(); }
+            catch (ApiException ex) { throw TransdirectException.FromApiException(ex); }
+        }
+        protected virtual async Task HandleError<K>(Func<K, Task> func, K v1)
+        {
+            try { await func(v1); }
+            catch (ApiException ex) { throw TransdirectException.FromApiException(ex); }
+        }
+        protected virtual async Task<V> HandleError<K, V>(Func<K, Task<V>> func, K v1)
+        {
+            try { return await func(v1); }
+            catch (ApiException ex) { throw TransdirectException.FromApiException(ex); }
+        }
+        protected virtual async Task HandleError<K1, K2>(Func<K1, K2, Task> func, K1 v1, K2 v2)
+        {
+            try { await func(v1, v2); }
+            catch (ApiException ex) { throw TransdirectException.FromApiException(ex); }
+        }
+        protected virtual async Task<V> HandleError<K1, K2, V>(Func<K1, K2, Task<V>> func, K1 v1, K2 v2)
+        {
+            try { return await func(v1, v2); }
+            catch (ApiException ex) { throw TransdirectException.FromApiException(ex); }
+        }
+        protected virtual async Task HandleError<K1, K2, K3>(Func<K1, K2, K3, Task> func, K1 v1, K2 v2, K3 v3)
+        {
+            try { await func(v1, v2, v3); }
+            catch (ApiException ex) { throw TransdirectException.FromApiException(ex); }
+        }
+        protected virtual async Task<V> HandleError<K1, K2, K3, V>(Func<K1, K2, K3, Task<V>> func, K1 v1, K2 v2, K3 v3)
+        {
+            try { return await func(v1, v2, v3); }
+            catch (ApiException ex) { throw TransdirectException.FromApiException(ex); }
+        }
+
         public Task<Quote> GetQuote(Quote quote)
-            => _apiService.GetQuote(quote);
+            => HandleError(_apiService.GetQuote, quote);
         public Task<Booking> CreateBooking(Booking booking)
-            => _apiService.CreateBooking(booking);
+            => HandleError(_apiService.CreateBooking, booking);
         public Task<IEnumerable<Booking>> GetBookings(DateTime? since = null, string sort = null)
-            => _apiService.GetBookings(since?.ToUniversalTime().ToString("o"), sort);
+            => HandleError(_apiService.GetBookings, since?.ToUniversalTime().ToString("o"), sort);
         public Task<Booking> GetSingleBooking(int bookingId)
-            => _apiService.GetSingleBooking(bookingId);
+            => HandleError(_apiService.GetSingleBooking, bookingId);
         public Task<Booking> UpdateBooking(int bookingId, Booking booking)
-            => _apiService.UpdateBooking(bookingId, booking);
+            => HandleError(_apiService.UpdateBooking, bookingId, booking);
         public Task DeleteBooking(int bookingId)
-            => _apiService.DeleteBooking(bookingId);
+            => HandleError(_apiService.DeleteBooking, bookingId);
         public Task ConfirmBooking(int bookingId, BookingConfirmation confirmation)
-            => _apiService.ConfirmBooking(bookingId, confirmation);
+            => HandleError(_apiService.ConfirmBooking, bookingId, confirmation);
         public Task<string> TrackBooking(int bookingId)
-            => _apiService.TrackBooking(bookingId);
+            => HandleError(_apiService.TrackBooking, bookingId);
         public Task<IEnumerable<Item>> GetBookingItems(int bookingId)
-            => _apiService.GetBookingItems(bookingId);
+            => HandleError(_apiService.GetBookingItems, bookingId);
         public Task<IEnumerable<Item>> AddItemToBooking(int bookingId, Item item)
-            => _apiService.AddItemToBooking(bookingId, item);
+            => HandleError(_apiService.AddItemToBooking, bookingId, item);
         public Task<Item> GetBookingSingleItem(int bookingId, int itemId)
-            => _apiService.GetBookingSingleItem(bookingId, itemId);
+            => HandleError(_apiService.GetBookingSingleItem, bookingId, itemId);
         public Task<Item> UpdateBookingItem(int bookingId, int itemId, Item item)
-            => _apiService.UpdateBookingItem(bookingId, itemId, item);
+            => HandleError(_apiService.UpdateBookingItem, bookingId, itemId, item);
         public Task RemoveBookingItem(int bookingId, int itemId)
-            => _apiService.RemoveBookingItem(bookingId, itemId);
+            => HandleError(_apiService.RemoveBookingItem, bookingId, itemId);
         public Task<Member> GetMember()
-            => _apiService.GetMember();
+            => HandleError(_apiService.GetMember);
 
         /// <summary>
         /// Getting all supported couriers.
